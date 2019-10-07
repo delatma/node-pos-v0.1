@@ -1,25 +1,49 @@
-module.exports = function main(inputs) {
-//    console.log("Debug Info");
-	console.log(inputs[0].Barcode);
-//	return printReceipt(inputs);
+module.exports = function main(input) {
+    console.log("Debug Info");
 
-	console.log('***<store earning no money>Receipt ***');
-//count number of items
-	var counts = [];
-	for (var i = 0; i < inputs.length; i++) {
-	    counts[inputs[i].Name] = 1 + (counts[inputs[i].Name] || 0);
-	}
-	var unit;
-//	name of objects
-	var keys = Object.keys(counts);
-//output
-	for (var i = 0; i < keys.length; i ++){
-		if (inputs[i].Unit == 'bottle')
-			unit = ' bottles';
-		if(keys[i] == 'Battery')
-			unit = '';
-		console.log('Name: ' + keys[i] + ', Quantity: ' + counts[keys[i]] + unit + ', '
-			+ 'Unit price: ');
+	return printReceipt(input);
+	function printReceipt(input){
+		var startOfReceipt = '***<store earning no money>Receipt ***';
+		var midOfReceipt = '----------------------\nTotal: ';
+		var endOfReceipt = '**********************\n';
+		var itemizedReceipt = '';
+		var subtotal = 0;
+		var totalAmount = 0;
+		var itemCount = [];
+		var itemPrice = [];
+		var unit;
+		var price = 0;
+		var currency = 'yuan';
+		//count instances of item names
+		for (var i = 0; i < input.length; i++) {
+		    itemCount[input[i].Name] = 1 + (itemCount[input[i].Name] || 0);
+		}//[ 'Coca-Cola': 5, Sprite: 2, Battery: 1 ]
+		var itemName = Object.keys(itemCount);
+
+		for (var i = 0; i < itemName.length; i++){
+			if (input[i].Unit == 'bottle'){
+				unit = ' ' + input[i].Unit + 's';
+			}
+			if(itemName[i] == 'Battery')
+				unit = '';
+
+			input.forEach(function(x){
+				if (x.Name == itemName[i])
+					price = x.Price;
+			 });
+
+			subtotal = price * itemCount[itemName[i]];
+			totalAmount += subtotal;
+	   		itemizedReceipt += 'Name: ' + itemName[i]
+	   		        + ', Quantity: ' + itemCount[itemName[i]] + unit + ', '
+					+ 'Unit price: ' + price.toFixed(2)
+					+ ` (${currency}), `
+					+ 'Subtotal: ' + subtotal.toFixed(2) + ` (${currency})\n`;
+		}
+
+		var finalReceipt = startOfReceipt + '\n' + itemizedReceipt + '\n' 
+		+ midOfReceipt + totalAmount.toFixed(2) + ` (${currency})` + '\n' + endOfReceipt;
+		return finalReceipt.replace(/[\r\n]+/g, '\n');
 	}
 
 };

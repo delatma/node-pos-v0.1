@@ -69,7 +69,7 @@ describe('pos', () => {
             '----------------------\n' +
             'Total: 23.00 (yuan)\n' +
             '**********************\n';
-            console.log(actualText);
-        //expect(actualText).toBe(expectText);
+
+        expect(actualText).toBe(expectText);
     });
 });
